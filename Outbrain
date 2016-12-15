@@ -1,0 +1,110 @@
+import pandas as pd
+import numpy as np
+import csv
+
+
+
+#reading csv files
+
+clicks_train = pd.read_csv("/N/u/bmallala/Karst/datamining/clicks_train.csv")
+clicks_test = pd.read_csv("/N/u/bmallala/Karst/datamining/clicks_test.csv")
+documents_categories = pd.read_csv("/N/u/bmallala/Karst/datamining/documents_categories.csv")
+documents_entities = pd.read_csv("/N/u/bmallala/Karst/datamining/documents_entities.csv")
+documents_topics = pd.read_csv("/N/u/bmallala/Karst/datamining/documents_topics.csv")
+documents_meta = pd.read_csv("/N/u/bmallala/Karst/datamining/documents_meta.csv")
+events= pd.read_csv("/N/u/bmallala/Karst/datamining/events.csv")
+promoted_content= pd.read_csv("/N/u/bmallala/Karst/datamining/promoted_content.csv")
+page_views_sample= pd.read_csv("/N/u/bmallala/Karst/datamining/page_views_sample.csv")
+sample_submission= pd.read_csv("/N/u/bmallala/Karst/datamining/sample_submission.csv")
+
+# checking for uniqueness
+
+print len(clicks_train['ad_id'].unique())# gives no of unique ad_id's
+print len(clicks_train['display_id'].unique())
+
+len(promoted_content.duplicate(document_id )== 'True')# gives no of unique display_id's
+
+#checking for no of rows and columns
+
+print promoted_content.shape
+print clicks_train.shape
+
+# checking for data types
+
+promoted_content.dtypes
+clicks_train.dtypes
+
+#sorting based on a coloumn
+sorted_clicks_train = clicks_train.sort(['display_id'])
+
+#sampling to a small numeber
+sample_clicks_train = sorted_clicks_train.sample(n=10000000)
+
+# combining tables 
+#combing promoted content and clicks_trian
+
+merge1 = events.merge(clicks_train, how = 'inner' , on = 'display_id')
+merge2 = promoted_content.merge(clicks_train, how = 'inner' , on = 'ad_id')
+
+# checking how many times each ad appears
+
+ad_number = clicks_train.ad_id.value_counts()
+
+
+# number of ad_id when clicked =1
+
+clicked_ad = clicks_train[clicks_train.clicked ==1].ad_id.value_counts()
+
+# probabalilty of every add being clicked by total no of adds
+
+average = np.sum(clicked_ad)/float(np.sum(ad_number)) 
+#changing column name of promoted content to merge
+
+promoted_content = promoted_content.rename(columns = { 'document_id' : 'document_id_content'})
+
+documents_categories = documents_categories.rename(columns = { 'confidence_level' : 'confidence_level_categories'})
+
+documents_topics = documents_topics.rename(columns = { 'confidence_level' : 'confidence_level_topics'})
+
+documents_entities = documents_entities.rename(columns = { 'confidence_level' : 'confidence_level_entities'})
+
+#merging merge1 with promoted content
+
+merge2 = promoted_content.merge(documents_entities , how = 'inner' , on = 'document_id')
+
+merge2 = merge2.merge(documents_topics , how = 'inner' , on = 'document_id')
+
+merge2 = merge2.merge(documents_categories , how = 'inner' , on = 'document_id')
+
+#checking for uniqueness in merge2 with respect to document id's
+print len(merge2['document_id'].unique())
+
+print len(merge2['document_id_content'].unique())
+
+#drawing plot
+
+import matplotlib.pyplot as plt
+
+plt.plot(clicks_train)
+plt.hist(clicks_train['ad_id'])
+
+
+#picking a random sample from the population
+
+sample_clicks = pd.clicks_trian.sample(n=100)
+
+#eda
+
+if clicks_train[clicks_train.clicked == 1]
+ad_usage_train = clicks_train.groupby('ad_id')[clicks_train.clicked==1].count()
+
+for i in [2, 10, 50, 100, 1000]:
+    print('Ads that are clicked appear less than {} times: {}%'.format(i, round((ad_usage_train < i).mean() * 100, 2)))
+
+
+
+
+ad_usage_train = clicks_train.groupby('ad_id')['ad_id'].count()
+
+for i in [2, 10, 50, 100, 1000]:
+    print('Ads that appear less than {} times: {}%'.format(i, round((ad_usage_train < i).mean() * 100, 2)& clicks_train.clicked == '1'))
